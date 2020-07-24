@@ -28,16 +28,25 @@ const useStyles = makeStyles((theme) => ({
 export default function Events(props) {
     const classes = useStyles();
     const [events, setEvents] = React.useState([])
-    const [count, setCount] = React.useState(0)
+    const [enrolledEvents, setEnrolledEvents] = React.useState([])
 
     useEffect(() => {
         // Update the events using the browser API
         axios.get("http://localhost:8080/events", { headers: {"Authorization" : `Bearer ${props.user.accessToken}`} })
             .then(res => {
-                console.log(res.data);
+                console.log("Events:",res.data);
                 setEvents(res.data)
             })
-    },[count]);
+        axios.get( `http://localhost:8080/clients/${props.user.username}/events`,
+            { headers: {"Authorization" : `Bearer ${props.user.accessToken}`} })
+            .then(res => {
+                console.log("Enrolled events:", res.data)
+                setEnrolledEvents(res.data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    },[props.count]);
 
     return (
         <React.Fragment>
@@ -50,7 +59,7 @@ export default function Events(props) {
                         <TableCell align="right">Ending Time</TableCell>
                         <TableCell align="right">Event Key</TableCell>
                         <TableCell align="right">Quota</TableCell>
-                        <TableCell align="right">Actions</TableCell>
+                        <TableCell align="center">Actions</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -66,12 +75,22 @@ export default function Events(props) {
                             <TableCell align="right">
                                 <ButtonGroup color="primary" aria-label="contained primary button group">
                                     <Button
-                                        component={() => <EnrollDialog
-                                                            update={count}
-                                                            setUpdate={setCount}
-                                                            user={props.user}
-                                                            eventKey={event.eventKey}
-                                                            event={event}/>}>
+                                        component={() => (enrolledEvents.some(e => e.eventKey === event.eventKey)) ?
+                                                            <Button disabled={true}>
+                                                                Already enrolled
+                                                            </Button>
+                                                                :
+                                                            event.quota === 0 ?
+                                                                <Button disabled={true}>
+                                                                    No Quota Left
+                                                                </Button>
+                                                                :
+                                                                <EnrollDialog
+                                                                update={props.count}
+                                                                setUpdate={props.setCount}
+                                                                user={props.user}
+                                                                eventKey={event.eventKey}
+                                                                event={event}/>}>
                                         Enroll
                                     </Button>
                                 </ButtonGroup>

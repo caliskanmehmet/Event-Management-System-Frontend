@@ -21,6 +21,7 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import { mainListItems, secondaryListItems } from './ListEvents';
 import Events from "./Events";
 import AuthService from "../../services/AuthService";
+import EnrolledEvents from "./EnrolledEvents";
 
 function Copyright() {
     return (
@@ -117,6 +118,7 @@ export default function UserDashboard() {
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
     const [currentUser, setCurrentUser] = React.useState(AuthService.getCurrentUser())
+    const [count, setCount] = React.useState(0)
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -169,22 +171,21 @@ export default function UserDashboard() {
                 <div className={classes.appBarSpacer} />
                 <Container maxWidth="lg" className={classes.container}>
                     <Grid container spacing={3}>
-                        {/* Chart */}
-                        <Grid item xs={12} md={8} lg={9}>
-                            <Paper className={fixedHeightPaper}>
-
+                        {/* Recent Deposits */}
+                        <Grid item xs={12} md={8} lg={8}>
+                            <Paper className={classes.paper}>
+                                <EnrolledEvents count={count} setCount={setCount} user={currentUser} />
                             </Paper>
                         </Grid>
-                        {/* Recent Deposits */}
-                        <Grid item xs={12} md={4} lg={3}>
-                            <Paper className={fixedHeightPaper}>
+                        <Grid item xs={12} md={8} lg={4}>
+                            <Paper className={classes.paper}>
 
                             </Paper>
                         </Grid>
                         {/* Recent Orders */}
                         <Grid item xs={12}>
                             <Paper className={classes.paper}>
-                                <Events user={currentUser}/>
+                                <Events count={count} setCount={setCount} user={currentUser}/>
                             </Paper>
                         </Grid>
                     </Grid>
