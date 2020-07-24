@@ -22,6 +22,7 @@ import { mainListItems, secondaryListItems } from './ListEvents';
 import Events from "./Events";
 import AuthService from "../../services/AuthService";
 import EnrolledEvents from "./EnrolledEvents";
+import UserInfo from "./UserInfo";
 
 function Copyright() {
     return (
@@ -179,7 +180,7 @@ export default function UserDashboard() {
                         </Grid>
                         <Grid item xs={12} md={8} lg={4}>
                             <Paper className={classes.paper}>
-
+                                <UserInfo user={currentUser} />
                             </Paper>
                         </Grid>
                         {/* Recent Orders */}
