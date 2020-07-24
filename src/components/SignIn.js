@@ -61,8 +61,17 @@ export default function SignIn(props) {
     const loginRequest = () => {
         AuthService.login(inputList["username"], inputList["password"]).then(
             () => {
-                console.log("login successful!")
-                props.setLoginStatus("user")
+                const userData = localStorage.getItem('user')
+                const data = JSON.parse(userData)
+                if ( data.roles.includes("ROLE_ADMIN")) {
+                    props.setLoginStatus("admin")
+                    console.log("Logged as admin")
+                }
+                else {
+                    props.setLoginStatus("user")
+                    console.log("Logged as user")
+                }
+
             },
             error => {
                 const resMessage =
@@ -76,6 +85,7 @@ export default function SignIn(props) {
     }
 
     return (
+        props.loginStatus === "admin" ? (<Redirect to='/panel'  />) :
         props.loginStatus === "user" ? (<Redirect to='/dashboard'  />) :
         <Container component="main" maxWidth="xs">
             <CssBaseline />

@@ -18,11 +18,12 @@ import EventIcon from '@material-ui/icons/Event';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import { mainListItems, secondaryListItems } from './ListCategories';
-import Events from "./Events";
+import { mainListItems } from './ListCategories';
 import AuthService from "../../services/AuthService";
-import EnrolledEvents from "./EnrolledEvents";
-import UserInfo from "./UserInfo";
+import Events from "./Events";
+import Button from '@material-ui/core/Button';
+import AddIcon from '@material-ui/icons/Add';
+import AddEventDialog from "./AddEventDialog";
 
 function Copyright() {
     return (
@@ -146,11 +147,19 @@ export default function UserDashboard() {
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                         Dashboard
                     </Typography>
-                    <IconButton color="inherit">
-                        <Badge badgeContent={4} color="secondary">
-                            <NotificationsIcon />
-                        </Badge>
-                    </IconButton>
+                    <Button
+                        variant="outlined"
+                        color="inherit"
+                        className={classes.button}
+                        component={ () => <AddEventDialog
+                                            user={currentUser}
+                                            variant="outlined"
+                                            color="inherit"
+                                          /> }
+                        startIcon={<AddIcon />}
+                    >
+                        Add Event
+                    </Button>
                 </Toolbar>
             </AppBar>
             <Drawer
@@ -172,21 +181,19 @@ export default function UserDashboard() {
                 <div className={classes.appBarSpacer} />
                 <Container maxWidth="lg" className={classes.container}>
                     <Grid container spacing={3}>
-                        {/* Recent Deposits */}
                         <Grid item xs={12} md={8} lg={8}>
                             <Paper className={classes.paper}>
-                                <EnrolledEvents count={count} setCount={setCount} user={currentUser} />
+
                             </Paper>
                         </Grid>
                         <Grid item xs={12} md={8} lg={4}>
                             <Paper className={classes.paper}>
-                                <UserInfo user={currentUser} />
+
                             </Paper>
                         </Grid>
-                        {/* Recent Orders */}
                         <Grid item xs={12}>
                             <Paper className={classes.paper}>
-                                <Events count={count} setCount={setCount} user={currentUser}/>
+                                <Events user={currentUser}/>
                             </Paper>
                         </Grid>
                     </Grid>
