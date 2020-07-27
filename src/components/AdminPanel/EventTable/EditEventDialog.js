@@ -7,8 +7,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import axios from "axios";
-import AddIcon from "@material-ui/icons/Add";
-import ClearIcon from '@material-ui/icons/Clear';
+import EditIcon from '@material-ui/icons/Edit';
 import {
     MuiPickersUtilsProvider,
     KeyboardDateTimePicker
@@ -16,14 +15,17 @@ import {
 import 'date-fns';
 import Grid from '@material-ui/core/Grid';
 import DateFnsUtils from '@date-io/date-fns';
-import IconButton from '@material-ui/core/IconButton';
 
-export default function AddEventDialog(props) {
+export default function EditEventDialog(props) {
     const [open, setOpen] = React.useState(false);
-    const [inputList, setInputList] = React.useState({});
-    const [questionCount, setQuestionCount] = React.useState(0);
-    const [startingDate, handleStartingDateChange] = React.useState(new Date());
-    const [endingDate, handleEndingDateChange] = React.useState(new Date());
+    const [inputList, setInputList] = React.useState(
+        {"title": props.event.title,
+                "quota": props.event.quota,
+                "eventKey": props.event.eventKey,
+        });
+    const [questionCount, setQuestionCount] = React.useState(props.event.questions.length);
+    const [startingDate, handleStartingDateChange] = React.useState(props.event.beginningTime);
+    const [endingDate, handleEndingDateChange] = React.useState(props.event.endingTime);
 
     const handleChange = (event) => {
         const newInputList = {...inputList}
@@ -39,30 +41,28 @@ export default function AddEventDialog(props) {
 
     const handleClose = () => {
         setOpen(false)
-        setQuestionCount(0)
     };
 
-    const options = {
-        data: {},
-        headers: {"Authorization" : `Bearer ${props.user.accessToken}`}
-    }
-
-    const data = []
-
-    const handleEnroll = () => {
+    const handleUpdate = () => {
         //var obj = JSON.parse(JSON.stringify(inputList));
         //var values = Object.keys(obj).map(function (key) { return obj[key]; });
 
         let arr = Array(questionCount)
         for ( var i = 0; i < questionCount; i++ ) {
-            arr.push(inputList[`question${i}`])
+            if (inputList[`question${i}`]) {
+                arr.push(inputList[`question${i}`])
+            }
+            else {
+                arr.push(props.event.questions[i])
+            }
+
         }
 
         console.log(arr)
 
         axios({
-            method: 'post',
-            url: `http://localhost:8080/events/add`,
+            method: 'put',
+            url: `http://localhost:8080/events/${props.event.eventKey}`,
             headers: {"Authorization" : `Bearer ${props.user.accessToken}`},
             data: {
                 "title": inputList["title"],
@@ -74,20 +74,9 @@ export default function AddEventDialog(props) {
             }
         }).then( res => {
             setOpen(false)
-            props.setCount(props.count + 1) // trigger a render
-            setQuestionCount(0)
+            props.setUpdate(props.update + 1) // trigger a render
         })
     };
-
-    //  const questionField =  {<TextField
-    //         margin="dense"
-    //         onChange={handleChange}
-    //         id="question"
-    //         name="question"
-    //         label="Soru"
-    //         fullWidth
-    //     />}
-    // }
 
     const incrementCount = () => {
         setQuestionCount(questionCount + 1)
@@ -97,26 +86,27 @@ export default function AddEventDialog(props) {
         if ( questionCount > 0 ) {
             setQuestionCount(questionCount - 1)
         }
-
     }
-
-
-    // ToDo add question component for each button click
 
     return (
         <div>
-            <Button variant="outlined" color="inherit" onClick={handleClickOpen} startIcon={<AddIcon />}>
-                Add Event
+            <Button
+                variant="outlined"
+                color="inherit"
+                onClick={handleClickOpen}
+                startIcon={<EditIcon />}
+                disabled={Date.now() > Date.parse(props.event.beginningTime)}>
+                Edit
             </Button>
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Etkinlik Oluşturma</DialogTitle>
+                <DialogTitle id="form-dialog-title">Etkinlik Düzenleme</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Etkinliği oluşturabilmeniz için aşağıdaki alanları doldurmanız
-                        gerekiyor.
+                        Aşağıdaki alanlar ile etkinliği düzenleyebilirsiniz.
                     </DialogContentText>
                     <TextField
                         autoFocus
+                        defaultValue={props.event.title}
                         margin="dense"
                         onChange={handleChange}
                         id="title"
@@ -133,7 +123,7 @@ export default function AddEventDialog(props) {
                                 id="startingDate"
                                 minDate={new Date()}
                                 minDateMessage={"Başlangıç tarihi şimdiki zamandan önce olamaz!"}
-                                value={startingDate}
+                                value={startingDate} // ToDo manually change
                                 onChange={handleStartingDateChange}
                                 name="startingDate"
                                 label="Başlangıç tarihi"
@@ -163,6 +153,7 @@ export default function AddEventDialog(props) {
                     <TextField
                         margin="dense"
                         onChange={handleChange}
+                        defaultValue={props.event.eventKey}
                         id="eventKey"
                         name="eventKey"
                         label="Etkinlik Anahtarı (8 karakterden oluşmalı)"
@@ -172,6 +163,7 @@ export default function AddEventDialog(props) {
                         margin="dense"
                         onChange={handleChange}
                         id="quota"
+                        defaultValue={props.event.quota}
                         name="quota"
                         label="Etkinlik Kotası"
                         fullWidth
@@ -182,29 +174,23 @@ export default function AddEventDialog(props) {
                     <Button variant={"outlined"} onClick={decrementCount} color="secondary">
                         Soru kaldır
                     </Button>
-                    {[...Array(questionCount)].map((e, i) => {
-                        return(
-                            <div>
-                                <TextField key={i}
-                                           margin="dense"
-                                           onChange={handleChange}
-                                           id={`question${i}`}
-                                           name={`question${i}`}
-                                           label={`Soru ${i + 1}`}
-                                           fullWidth
-                                />
-                            </div>
-                        )
-                        }
-                        )}
+                    {[...Array(questionCount)].map((e, i) => <TextField key={i}
+                                                                        margin="dense"
+                                                                        onChange={handleChange}
+                                                                        id={`question${i}`}
+                                                                        name={`question${i}`}
+                                                                        defaultValue={props.event.questions[i]}
+                                                                        label={`Soru ${i + 1}`}
+                                                                        fullWidth
+                    />)}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="secondary">
                         İptal Et
                     </Button>
-                    <Button onClick={handleEnroll} color="primary" disabled={startingDate >= endingDate
+                    <Button onClick={handleUpdate} color="primary" disabled={startingDate >= endingDate
                     || (inputList["eventKey"] && inputList["eventKey"].length !== 8) || !inputList["eventKey"]}>
-                        Oluştur
+                        Düzenle
                     </Button>
                 </DialogActions>
             </Dialog>

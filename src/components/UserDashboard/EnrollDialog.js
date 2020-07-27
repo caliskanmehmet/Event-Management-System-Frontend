@@ -50,25 +50,35 @@ export default function EnrollDialog(props) {
             })
     };
 
+    // ToDo gelen tarihi parse et ve düzgün bir formata dönüştür
     return (
         <div>
             <Button variant="outlined" color="primary" onClick={handleClickOpen}>
                 Enroll
             </Button>
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+                <DialogTitle id="form-dialog-title">Kayıt Ol</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        Etkinliğe katılabilmeniz için etkinlik kurucusunun sorduğu soruları
-                        cevaplamanız gerekiyor.
+                        {props.event.questions.length === 0 ?
+                            <DialogContentText>
+                                Etkinliğe katılmak istediğinizden
+                                emin misiniz?
+                            </DialogContentText>
+                            :
+                            <DialogContentText>
+                                Etkinliğe katılabilmeniz için etkinlik kurucusunun sorduğu soruları
+                                cevaplamanız gerekiyor.
+                            </DialogContentText>
+                        }
                     </DialogContentText>
                     {props.event.questions.map( (question) => (
                         <TextField
-                            autoFocus
                             margin="dense"
                             onChange={handleChange}
                             id={question}
                             name={question}
+                            required={true}
                             label={question}
                             type="email"
                             fullWidth

@@ -23,6 +23,7 @@ import Events from "./Events";
 import AuthService from "../../services/AuthService";
 import EnrolledEvents from "./EnrolledEvents";
 import UserInfo from "./UserInfo";
+import Redirect from "react-router-dom/Redirect";
 
 function Copyright() {
     return (
@@ -130,6 +131,7 @@ export default function UserDashboard() {
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     return (
+        currentUser.roles.includes("ROLE_ADMIN") ? (<Redirect to='/panel'  />) :
         <div className={classes.root}>
             <CssBaseline />
             <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
@@ -144,13 +146,8 @@ export default function UserDashboard() {
                         <MenuIcon />
                     </IconButton>
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                        Dashboard
+                        Kullanıcı Paneli
                     </Typography>
-                    <IconButton color="inherit">
-                        <Badge badgeContent={4} color="secondary">
-                            <NotificationsIcon />
-                        </Badge>
-                    </IconButton>
                 </Toolbar>
             </AppBar>
             <Drawer

@@ -20,10 +20,11 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import { mainListItems } from './ListCategories';
 import AuthService from "../../services/AuthService";
-import Events from "./Events";
+import Events from "./EventTable/Events";
 import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
 import AddEventDialog from "./AddEventDialog";
+import Redirect from "react-router-dom/Redirect";
 
 function Copyright() {
     return (
@@ -131,6 +132,7 @@ export default function UserDashboard() {
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     return (
+        !currentUser.roles.includes("ROLE_ADMIN") ? (<Redirect to='/dashboard'  />) :
         <div className={classes.root}>
             <CssBaseline />
             <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
@@ -145,7 +147,7 @@ export default function UserDashboard() {
                         <MenuIcon />
                     </IconButton>
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                        Dashboard
+                        Yönetici Paneli
                     </Typography>
                     <Button
                         variant="outlined"
@@ -155,6 +157,8 @@ export default function UserDashboard() {
                                             user={currentUser}
                                             variant="outlined"
                                             color="inherit"
+                                            count={count}
+                                            setCount={setCount}
                                           /> }
                         startIcon={<AddIcon />}
                     >
@@ -193,7 +197,7 @@ export default function UserDashboard() {
                         </Grid>
                         <Grid item xs={12}>
                             <Paper className={classes.paper}>
-                                <Events user={currentUser}/>
+                                <Events count={count} user={currentUser} setCount={setCount}/>
                             </Paper>
                         </Grid>
                     </Grid>

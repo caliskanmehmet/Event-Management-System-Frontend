@@ -61,8 +61,8 @@ export default function EnrolledEvents(props) {
                             <TableCell component="th" scope="row">
                                 {event.title}
                             </TableCell>
-                            <TableCell align="right">{event.beginningTime}</TableCell>
-                            <TableCell align="right">{event.endingTime}</TableCell>
+                            <TableCell align="right">{new Date(Date.parse(event.beginningTime)).toLocaleString()}</TableCell>
+                            <TableCell align="right">{new Date(Date.parse(event.endingTime)).toLocaleString()}</TableCell>
                             <TableCell align="right">
                                 <ButtonGroup color="secondary" aria-label="contained primary button group">
                                     <Button

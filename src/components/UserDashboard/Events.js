@@ -63,40 +63,44 @@ export default function Events(props) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {events.map((event) => (
-                        <TableRow key={event.name}>
-                            <TableCell component="th" scope="row">
-                                {event.title}
-                            </TableCell>
-                            <TableCell align="right">{event.beginningTime}</TableCell>
-                            <TableCell align="right">{event.endingTime}</TableCell>
-                            <TableCell align="right">{event.eventKey}</TableCell>
-                            <TableCell align="right">{event.quota}</TableCell>
-                            <TableCell align="right">
-                                <ButtonGroup color="primary" aria-label="contained primary button group">
-                                    <Button
-                                        component={() => (enrolledEvents.some(e => e.eventKey === event.eventKey)) ?
-                                                            <Button disabled={true}>
-                                                                Already enrolled
-                                                            </Button>
-                                                                :
-                                                            event.quota === 0 ?
-                                                                <Button disabled={true}>
-                                                                    No Quota Left
-                                                                </Button>
-                                                                :
-                                                                <EnrollDialog
-                                                                update={props.count}
-                                                                setUpdate={props.setCount}
-                                                                user={props.user}
-                                                                eventKey={event.eventKey}
-                                                                event={event}/>}>
-                                        Enroll
-                                    </Button>
-                                </ButtonGroup>
-                            </TableCell>
-                        </TableRow>
-                    ))}
+                    {events.map((event) => {
+                        if (Date.now() < Date.parse(event.beginningTime)) {
+                            return(
+                                <TableRow key={event.name}>
+                                    <TableCell component="th" scope="row">
+                                        {event.title}
+                                    </TableCell>
+                                    <TableCell align="right">{new Date(Date.parse(event.beginningTime)).toLocaleString()}</TableCell>
+                                    <TableCell align="right">{new Date(Date.parse(event.endingTime)).toLocaleString()}</TableCell>
+                                    <TableCell align="right">{event.eventKey}</TableCell>
+                                    <TableCell align="right">{event.quota}</TableCell>
+                                    <TableCell align="right">
+                                        <ButtonGroup color="primary" aria-label="contained primary button group">
+                                            <Button
+                                                component={() => (enrolledEvents.some(e => e.eventKey === event.eventKey)) ?
+                                                    <Button disabled={true}>
+                                                        Already enrolled
+                                                    </Button>
+                                                    :
+                                                    event.quota === 0 ?
+                                                        <Button disabled={true}>
+                                                            No Quota Left
+                                                        </Button>
+                                                        :
+                                                        <EnrollDialog
+                                                            update={props.count}
+                                                            setUpdate={props.setCount}
+                                                            user={props.user}
+                                                            eventKey={event.eventKey}
+                                                            event={event}/>}>
+                                                Enroll
+                                            </Button>
+                                        </ButtonGroup>
+                                    </TableCell>
+                                </TableRow>
+                            )
+                        }
+                    })}
                 </TableBody>
             </Table>
 
