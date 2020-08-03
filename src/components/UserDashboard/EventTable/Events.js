@@ -1,20 +1,15 @@
 import React, {useEffect} from 'react';
-import {Link} from "react-router-dom";
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Title from './Title';
+import Title from '../Title';
 import axios from "axios"
 import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import EnrollDialog from "./EnrollDialog";
-
-function preventDefault(event) {
-    event.preventDefault();
-}
 
 const useStyles = makeStyles((theme) => ({
     seeMore: {
@@ -50,23 +45,23 @@ export default function Events(props) {
 
     return (
         <React.Fragment>
-            <Title>Events</Title>
+            <Title>Etkinlikler</Title>
             <Table className={classes.table} aria-label="simple table">
                 <TableHead>
                     <TableRow>
-                        <TableCell>Event Title</TableCell>
-                        <TableCell align="right">Beginning Time</TableCell>
-                        <TableCell align="right">Ending Time</TableCell>
-                        <TableCell align="right">Event Key</TableCell>
-                        <TableCell align="right">Quota</TableCell>
-                        <TableCell align="center">Actions</TableCell>
+                        <TableCell>Etkinlik İsmi</TableCell>
+                        <TableCell align="right">Başlangıç Zamanı</TableCell>
+                        <TableCell align="right">Bitiş Zamanı</TableCell>
+                        <TableCell align="right">Etkinlik Anahtarı</TableCell>
+                        <TableCell align="right">Kota</TableCell>
+                        <TableCell align="center">Düzenle</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {events.map((event) => {
                         if (Date.now() < Date.parse(event.beginningTime)) {
                             return(
-                                <TableRow key={event.name}>
+                                <TableRow key={event.title}>
                                     <TableCell component="th" scope="row">
                                         {event.title}
                                     </TableCell>
@@ -74,17 +69,17 @@ export default function Events(props) {
                                     <TableCell align="right">{new Date(Date.parse(event.endingTime)).toLocaleString()}</TableCell>
                                     <TableCell align="right">{event.eventKey}</TableCell>
                                     <TableCell align="right">{event.quota}</TableCell>
-                                    <TableCell align="right">
+                                    <TableCell align="center">
                                         <ButtonGroup color="primary" aria-label="contained primary button group">
                                             <Button
                                                 component={() => (enrolledEvents.some(e => e.eventKey === event.eventKey)) ?
                                                     <Button disabled={true}>
-                                                        Already enrolled
+                                                        Zaten kayıtlı
                                                     </Button>
                                                     :
                                                     event.quota === 0 ?
                                                         <Button disabled={true}>
-                                                            No Quota Left
+                                                            Etkinlik dolu
                                                         </Button>
                                                         :
                                                         <EnrollDialog
@@ -93,7 +88,7 @@ export default function Events(props) {
                                                             user={props.user}
                                                             eventKey={event.eventKey}
                                                             event={event}/>}>
-                                                Enroll
+                                                Kayıt ol
                                             </Button>
                                         </ButtonGroup>
                                     </TableCell>

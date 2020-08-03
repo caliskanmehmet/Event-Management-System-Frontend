@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -8,7 +8,6 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import axios from "axios";
 import AddIcon from "@material-ui/icons/Add";
-import ClearIcon from '@material-ui/icons/Clear';
 import {
     MuiPickersUtilsProvider,
     KeyboardDateTimePicker
@@ -16,7 +15,8 @@ import {
 import 'date-fns';
 import Grid from '@material-ui/core/Grid';
 import DateFnsUtils from '@date-io/date-fns';
-import IconButton from '@material-ui/core/IconButton';
+import Alert from "@material-ui/lab/Alert";
+import Snackbar from "@material-ui/core/Snackbar";
 
 export default function AddEventDialog(props) {
     const [open, setOpen] = React.useState(false);
@@ -24,6 +24,8 @@ export default function AddEventDialog(props) {
     const [questionCount, setQuestionCount] = React.useState(0);
     const [startingDate, handleStartingDateChange] = React.useState(new Date());
     const [endingDate, handleEndingDateChange] = React.useState(new Date());
+    const [errorOpen, setErrorOpen] = React.useState(false);
+    const [errorMessage, setErrorMessage] = React.useState("")
 
     const handleChange = (event) => {
         const newInputList = {...inputList}
@@ -41,13 +43,6 @@ export default function AddEventDialog(props) {
         setOpen(false)
         setQuestionCount(0)
     };
-
-    const options = {
-        data: {},
-        headers: {"Authorization" : `Bearer ${props.user.accessToken}`}
-    }
-
-    const data = []
 
     const handleEnroll = () => {
         //var obj = JSON.parse(JSON.stringify(inputList));
@@ -77,6 +72,17 @@ export default function AddEventDialog(props) {
             props.setCount(props.count + 1) // trigger a render
             setQuestionCount(0)
         })
+            .catch(err => {
+                if ( err.response.data.errors ) {
+                    setErrorMessage(err.response.data.errors[0].defaultMessage)
+                    setErrorOpen(true)
+                }
+                else if (err.response.data.message) {
+                    setErrorMessage(err.response.data.message)
+                    setErrorOpen(true)
+                }
+                console.log(err.response)
+            })
     };
 
     //  const questionField =  {<TextField
@@ -106,7 +112,7 @@ export default function AddEventDialog(props) {
     return (
         <div>
             <Button variant="outlined" color="inherit" onClick={handleClickOpen} startIcon={<AddIcon />}>
-                Add Event
+                Etkinlik Oluştur
             </Button>
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
                 <DialogTitle id="form-dialog-title">Etkinlik Oluşturma</DialogTitle>
@@ -129,7 +135,7 @@ export default function AddEventDialog(props) {
                             <KeyboardDateTimePicker
                                 margin="normal"
                                 ampm={false}
-                                disablepast={true}
+                                disablepast
                                 id="startingDate"
                                 minDate={new Date()}
                                 minDateMessage={"Başlangıç tarihi şimdiki zamandan önce olamaz!"}
@@ -146,7 +152,7 @@ export default function AddEventDialog(props) {
                                 margin="normal"
                                 id="startingDate"
                                 ampm={false}
-                                disablepast={true}
+                                disablepast
                                 minDate={startingDate}
                                 minDateMessage={"Bitiş tarihi başlangıç tarihinden önce olamaz!"}
                                 value={endingDate}
@@ -207,6 +213,11 @@ export default function AddEventDialog(props) {
                         Oluştur
                     </Button>
                 </DialogActions>
+                <Snackbar open={errorOpen} autoHideDuration={6000}>
+                    <Alert severity="warning">
+                        {errorMessage}
+                    </Alert>
+                </Snackbar>
             </Dialog>
         </div>
     );

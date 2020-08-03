@@ -3,8 +3,6 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
@@ -15,6 +13,8 @@ import Container from '@material-ui/core/Container';
 
 import AuthService from "../services/AuthService";
 import Redirect from "react-router-dom/Redirect";
+import Snackbar from "@material-ui/core/Snackbar";
+import Alert from '@material-ui/lab/Alert';
 
 function Copyright() {
     return (
@@ -51,6 +51,7 @@ const useStyles = makeStyles((theme) => ({
 export default function SignIn(props) {
     const classes = useStyles();
     const [inputList, setInputList] = React.useState({});
+    const [open, setOpen] = React.useState(false)
 
     const handleChange = (event) => {
         const newInputList = {...inputList}
@@ -80,6 +81,8 @@ export default function SignIn(props) {
                         error.response.data.message) ||
                     error.message ||
                     error.toString();
+                setOpen(true)
+                return resMessage
             }
         );
     }
@@ -140,6 +143,11 @@ export default function SignIn(props) {
             <Box mt={8}>
                 <Copyright />
             </Box>
+            <Snackbar open={open} autoHideDuration={6000}>
+                <Alert severity="warning">
+                    Giriş başarısız!
+                </Alert>
+            </Snackbar>
         </Container>
     );
 }

@@ -9,24 +9,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import ClientTable from "./ClientTable";
 import PeopleIcon from '@material-ui/icons/People';
 
-const useStyles = makeStyles((theme) => ({
-    form: {
-        display: 'flex',
-        flexDirection: 'column',
-        margin: 'auto',
-        width: 'fit-content',
-    },
-    formControl: {
-        marginTop: theme.spacing(2),
-        minWidth: 120,
-    },
-    formControlLabel: {
-        marginTop: theme.spacing(1),
-    },
-}));
-
 export default function EnrolledClients(props) {
-    const classes = useStyles();
     const [open, setOpen] = React.useState(false);
     const [fullWidth, setFullWidth] = React.useState(true);
     const [maxWidth, setMaxWidth] = React.useState('lg');
@@ -41,8 +24,14 @@ export default function EnrolledClients(props) {
 
     return (
         <React.Fragment>
-            <Button variant="outlined" color="primary" onClick={handleClickOpen} startIcon={<PeopleIcon />}>
-                Participants
+            <Button
+                variant="outlined"
+                color="primary"
+                onClick={handleClickOpen}
+                startIcon={<PeopleIcon />}
+                disabled={props.event.participantCount === 0}
+            >
+                Katılımcılar
             </Button>
             <Dialog
                 fullWidth={fullWidth}
@@ -51,16 +40,16 @@ export default function EnrolledClients(props) {
                 onClose={handleClose}
                 aria-labelledby="max-width-dialog-title"
             >
-                <DialogTitle id="max-width-dialog-title">Enrolled Clients</DialogTitle>
+                <DialogTitle id="max-width-dialog-title">Katılımcılar</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
-                        You can view the info of enrolled clients of this event.
+                        Burada etkinliğe katılan katılımcıların bilgilerini görebilirsiniz.
                     </DialogContentText>
                     <ClientTable user={props.user} eventKey={props.event.eventKey} event={props.event}/>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="primary">
-                        Close
+                        Kapat
                     </Button>
                 </DialogActions>
             </Dialog>

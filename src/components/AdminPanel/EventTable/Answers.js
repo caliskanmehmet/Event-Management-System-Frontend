@@ -65,11 +65,11 @@ export default function Answers(props) {
     return (
         <div>
             <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-                Show answers
+                Cevapları göster
             </Button>
             <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
                 <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    {`Answers of ${props.name} ${props.surname}`}
+                    {`${props.name} ${props.surname}'ın cevapları`}
                 </DialogTitle>
                 <DialogContent dividers>
                     {zipped.map( content => {
@@ -89,7 +89,7 @@ export default function Answers(props) {
                 </DialogContent>
                 <DialogActions>
                     <Button autoFocus onClick={handleClose} color="primary">
-                        Close
+                        Kapat
                     </Button>
                 </DialogActions>
             </Dialog>

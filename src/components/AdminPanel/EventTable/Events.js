@@ -1,6 +1,5 @@
 import React, {useEffect} from 'react';
-import {Link} from "react-router-dom";
-import { makeStyles } from '@material-ui/core/styles';
+import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -10,14 +9,28 @@ import Title from '../Title';
 import axios from "axios"
 import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
-import UnrollAlertDialog from "../../UserDashboard/UnrollAlertDialog";
 import DeleteEventDialog from "./DeleteEventDialog";
 import EnrolledClients from "./EnrolledClients";
 import EditEventDialog from "./EditEventDialog";
+import EnrollmentDateGraphContainer from "../EnrollmentDateGraph/EnrollmentDateGraphContainer";
 
-function preventDefault(event) {
-    event.preventDefault();
-}
+const StyledTableCell = withStyles((theme) => ({
+    head: {
+        backgroundColor: theme.palette.secondary.light,
+        color: theme.palette.common.white,
+    },
+    body: {
+        fontSize: 14,
+    },
+}))(TableCell);
+
+const StyledTableRow = withStyles((theme) => ({
+    root: {
+        '&:nth-of-type(odd)': {
+            backgroundColor: theme.palette.action.hover,
+        },
+    },
+}))(TableRow);
 
 const useStyles = makeStyles((theme) => ({
     seeMore: {
@@ -46,21 +59,21 @@ export default function Events(props) {
 
     return (
         <React.Fragment>
-            <Title>Events</Title>
+            <Title>Etkinlikler</Title>
             <Table className={classes.table} aria-label="simple table">
                 <TableHead>
                     <TableRow>
-                        <TableCell>Event Title</TableCell>
-                        <TableCell align="center">Beginning Time</TableCell>
-                        <TableCell align="center">Ending Time</TableCell>
-                        <TableCell align="center">Event Key</TableCell>
-                        <TableCell align="center">Quota</TableCell>
-                        <TableCell align="center">Actions</TableCell>
+                        <TableCell>Etkinlik İsmi</TableCell>
+                        <TableCell align="center">Başlangıç Zamanı</TableCell>
+                        <TableCell align="center">Bitiş Zamanı</TableCell>
+                        <TableCell align="center">Etkinlik Anahtarı</TableCell>
+                        <TableCell align="center">Kota</TableCell>
+                        <TableCell align="center">Düzenleme</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {events.map((event) => (
-                        <TableRow key={event.name}>
+                        <StyledTableRow key={event.title}>
                             <TableCell component="th" scope="row">
                                 {event.title}
                             </TableCell>
@@ -70,16 +83,6 @@ export default function Events(props) {
                             <TableCell align="center">{event.quota}</TableCell>
                             <TableCell align="center">
                                 <ButtonGroup aria-label="contained primary button group">
-                                    <Button color="secondary"
-                                        component={() => <DeleteEventDialog
-                                            update={props.count}
-                                            disabled={event.beginningTime >= new Date()}
-                                            setUpdate={props.setCount}
-                                            user={props.user}
-                                            eventKey={event.eventKey}
-                                            event={event}/>}>
-                                        Delete
-                                    </Button>
                                     <Button color="primary"
                                             component={() => <EnrolledClients
                                                 update={props.count}
@@ -87,7 +90,14 @@ export default function Events(props) {
                                                 user={props.user}
                                                 eventKey={event.eventKey}
                                                 event={event}/>}>
-                                        Participants
+                                        Katılımcılar
+                                    </Button>
+                                    <Button color="primary"
+                                            component={() => <EnrollmentDateGraphContainer
+                                                user={props.user}
+                                                eventKey={event.eventKey}
+                                                event={event}/>}>
+                                        Grafik
                                     </Button>
                                     <Button color="inherit"
                                             component={() => <EditEventDialog
@@ -96,11 +106,21 @@ export default function Events(props) {
                                                 user={props.user}
                                                 eventKey={event.eventKey}
                                                 event={event}/>}>
-                                        Edit
+                                        Düzenle
+                                    </Button>
+                                    <Button color="secondary"
+                                            component={() => <DeleteEventDialog
+                                                update={props.count}
+                                                disabled={event.beginningTime >= new Date()}
+                                                setUpdate={props.setCount}
+                                                user={props.user}
+                                                eventKey={event.eventKey}
+                                                event={event}/>}>
+                                        Sil
                                     </Button>
                                 </ButtonGroup>
                             </TableCell>
-                        </TableRow>
+                        </StyledTableRow >
                     ))}
                 </TableBody>
             </Table>
