@@ -10,16 +10,13 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import EventIcon from '@material-ui/icons/Event';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import { mainListItems, secondaryListItems } from './ListCategories';
-import Events from "./Events";
+import mainListItems from './ListCategories';
+import Events from "./EventTable/Events";
 import AuthService from "../../services/AuthService";
 import EnrolledEvents from "./EnrolledEvents";
 import UserInfo from "./UserInfo";
@@ -118,7 +115,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function UserDashboard() {
     const classes = useStyles();
-    const [open, setOpen] = React.useState(true);
+    const [open, setOpen] = React.useState(false);
     const [currentUser, setCurrentUser] = React.useState(AuthService.getCurrentUser())
     const [count, setCount] = React.useState(0)
 
@@ -131,7 +128,7 @@ export default function UserDashboard() {
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     return (
-        currentUser.roles.includes("ROLE_ADMIN") ? (<Redirect to='/panel'  />) :
+        currentUser ? currentUser.roles.includes("ROLE_ADMIN") ? (<Redirect to='/panel'  />) :
         <div className={classes.root}>
             <CssBaseline />
             <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
@@ -170,12 +167,12 @@ export default function UserDashboard() {
                 <Container maxWidth="lg" className={classes.container}>
                     <Grid container spacing={3}>
                         {/* Recent Deposits */}
-                        <Grid item xs={12} md={8} lg={8}>
+                        <Grid item xs={12} md={8} lg={9}>
                             <Paper className={classes.paper}>
                                 <EnrolledEvents count={count} setCount={setCount} user={currentUser} />
                             </Paper>
                         </Grid>
-                        <Grid item xs={12} md={8} lg={4}>
+                        <Grid item xs={12} md={8} lg={3}>
                             <Paper className={classes.paper}>
                                 <UserInfo user={currentUser} />
                             </Paper>
@@ -192,6 +189,6 @@ export default function UserDashboard() {
                     </Box>
                 </Container>
             </main>
-        </div>
+        </div> : <Redirect to="/" />
     );
 }

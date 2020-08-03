@@ -10,14 +10,11 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import EventIcon from '@material-ui/icons/Event';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import { mainListItems } from './ListCategories';
 import AuthService from "../../services/AuthService";
 import Events from "./EventTable/Events";
@@ -25,6 +22,7 @@ import Button from '@material-ui/core/Button';
 import AddIcon from '@material-ui/icons/Add';
 import AddEventDialog from "./AddEventDialog";
 import Redirect from "react-router-dom/Redirect";
+import ParticipantCountGraphContainer from "./ParticipantCountGraph/ParticipantCountGraphContainer";
 
 function Copyright() {
     return (
@@ -117,9 +115,9 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function UserDashboard() {
+export default function AdminPanel() {
     const classes = useStyles();
-    const [open, setOpen] = React.useState(true);
+    const [open, setOpen] = React.useState(false);
     const [currentUser, setCurrentUser] = React.useState(AuthService.getCurrentUser())
     const [count, setCount] = React.useState(0)
 
@@ -132,6 +130,7 @@ export default function UserDashboard() {
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
     return (
+        currentUser ?
         !currentUser.roles.includes("ROLE_ADMIN") ? (<Redirect to='/dashboard'  />) :
         <div className={classes.root}>
             <CssBaseline />
@@ -153,6 +152,21 @@ export default function UserDashboard() {
                         variant="outlined"
                         color="inherit"
                         className={classes.button}
+                        component={ () => <ParticipantCountGraphContainer
+                            user={currentUser}
+                            variant="outlined"
+                            color="inherit"
+                            count={count}
+                            setCount={setCount}
+                        /> }
+                        startIcon={<AddIcon />}
+                    >
+                        Etkinlik Ekle
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        color="inherit"
+                        className={classes.button}
                         component={ () => <AddEventDialog
                                             user={currentUser}
                                             variant="outlined"
@@ -162,7 +176,7 @@ export default function UserDashboard() {
                                           /> }
                         startIcon={<AddIcon />}
                     >
-                        Add Event
+                        Etkinlik Ekle
                     </Button>
                 </Toolbar>
             </AppBar>
@@ -185,16 +199,6 @@ export default function UserDashboard() {
                 <div className={classes.appBarSpacer} />
                 <Container maxWidth="lg" className={classes.container}>
                     <Grid container spacing={3}>
-                        <Grid item xs={12} md={8} lg={8}>
-                            <Paper className={classes.paper}>
-
-                            </Paper>
-                        </Grid>
-                        <Grid item xs={12} md={8} lg={4}>
-                            <Paper className={classes.paper}>
-
-                            </Paper>
-                        </Grid>
                         <Grid item xs={12}>
                             <Paper className={classes.paper}>
                                 <Events count={count} user={currentUser} setCount={setCount}/>
@@ -206,6 +210,6 @@ export default function UserDashboard() {
                     </Box>
                 </Container>
             </main>
-        </div>
+        </div> : <Redirect to="/" />
     );
 }

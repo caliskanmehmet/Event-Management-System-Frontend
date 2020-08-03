@@ -39,7 +39,7 @@ export default function DeleteEventDialog(props) {
                 startIcon={<DeleteIcon />}
                 disabled={Date.now() > Date.parse(props.event.beginningTime)}
             >
-                Delete
+                Sil
             </Button>
             <Dialog
                 open={open}

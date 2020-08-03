@@ -21,13 +21,13 @@ export default function UserInfo(props) {
     return(
         <div>
             <Typography variant="h6" gutterBottom>
-                User Info
+                Kullanıcı Bilgileri
             </Typography>
             <Typography variant="subtitle2" gutterBottom>
-                Name: {userDetails.name}
+                İsim: {userDetails.name}
             </Typography>
             <Typography variant="subtitle2" gutterBottom>
-                Surname: {userDetails.surname}
+                Soyisim: {userDetails.surname}
             </Typography>
             <Typography variant="subtitle2" gutterBottom>
                 E-Mail: {userDetails.email}

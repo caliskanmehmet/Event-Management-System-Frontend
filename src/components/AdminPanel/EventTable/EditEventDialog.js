@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -15,6 +15,8 @@ import {
 import 'date-fns';
 import Grid from '@material-ui/core/Grid';
 import DateFnsUtils from '@date-io/date-fns';
+import Alert from "@material-ui/lab/Alert";
+import Snackbar from "@material-ui/core/Snackbar";
 
 export default function EditEventDialog(props) {
     const [open, setOpen] = React.useState(false);
@@ -26,6 +28,8 @@ export default function EditEventDialog(props) {
     const [questionCount, setQuestionCount] = React.useState(props.event.questions.length);
     const [startingDate, handleStartingDateChange] = React.useState(props.event.beginningTime);
     const [endingDate, handleEndingDateChange] = React.useState(props.event.endingTime);
+    const [errorOpen, setErrorOpen] = React.useState(false);
+    const [errorMessage, setErrorMessage] = React.useState("")
 
     const handleChange = (event) => {
         const newInputList = {...inputList}
@@ -76,6 +80,11 @@ export default function EditEventDialog(props) {
             setOpen(false)
             props.setUpdate(props.update + 1) // trigger a render
         })
+            .catch(err => {
+                setErrorMessage(err.response.data.errors[0].defaultMessage)
+                setErrorOpen(true)
+                console.log(err.response)
+            })
     };
 
     const incrementCount = () => {
@@ -96,7 +105,7 @@ export default function EditEventDialog(props) {
                 onClick={handleClickOpen}
                 startIcon={<EditIcon />}
                 disabled={Date.now() > Date.parse(props.event.beginningTime)}>
-                Edit
+                Düzenle
             </Button>
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
                 <DialogTitle id="form-dialog-title">Etkinlik Düzenleme</DialogTitle>
@@ -119,7 +128,7 @@ export default function EditEventDialog(props) {
                             <KeyboardDateTimePicker
                                 margin="normal"
                                 ampm={false}
-                                disablepast={true}
+                                disablepast
                                 id="startingDate"
                                 minDate={new Date()}
                                 minDateMessage={"Başlangıç tarihi şimdiki zamandan önce olamaz!"}
@@ -136,7 +145,7 @@ export default function EditEventDialog(props) {
                                 margin="normal"
                                 id="startingDate"
                                 ampm={false}
-                                disablepast={true}
+                                disablepast
                                 minDate={startingDate}
                                 minDateMessage={"Bitiş tarihi başlangıç tarihinden önce olamaz!"}
                                 value={endingDate}
@@ -194,6 +203,11 @@ export default function EditEventDialog(props) {
                     </Button>
                 </DialogActions>
             </Dialog>
+            <Snackbar open={errorOpen} autoHideDuration={6000}>
+                <Alert severity="warning">
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
         </div>
     );
 }

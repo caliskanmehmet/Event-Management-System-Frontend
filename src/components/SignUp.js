@@ -1,10 +1,8 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
@@ -12,10 +10,12 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import axios from "axios";
 
 import AuthService from "../services/AuthService";
 import Redirect from "react-router-dom/Redirect";
+import SuccessMessage from "./SuccessMessage";
+import Alert from "@material-ui/lab/Alert";
+import Snackbar from "@material-ui/core/Snackbar";
 
 function Copyright() {
     return (
@@ -53,17 +53,13 @@ export default function SignUp() {
     const classes = useStyles();
     const [inputList, setInputList] = React.useState({});
     const [redirect, setRedirect] = React.useState(false);
+    const [errorOpen, setErrorOpen] = React.useState(false);
+    const [errorMessage, setErrorMessage] = React.useState("")
 
     const handleChange = (event) => {
         const newInputList = {...inputList}
         newInputList[event.target.name] = event.target.value
         setInputList(newInputList)
-    }
-
-    const renderRedirect = () => {
-        if (redirect) {
-            return <Redirect to='/target' />
-        }
     }
 
     const signUpRequest = () => {
@@ -81,15 +77,17 @@ export default function SignUp() {
                     console.log("Status is 200")
                     setRedirect(true)
                 }
-            },
-            error => {
-                const resMessage =
-                    (error.response &&
-                        error.response.data &&
-                        error.response.data.message) ||
-                    error.message ||
-                    error.toString();
-
+            })
+            .catch(error => {
+                if (error.response.data.errors) {
+                    setErrorMessage(error.response.data.errors[0].defaultMessage)
+                    setErrorOpen(true)
+                }
+                else if(error.response.data.message) {
+                    setErrorMessage(error.response.data.message)
+                    setErrorOpen(true)
+                }
+                console.log(error.response)
             })
     }
 
@@ -196,6 +194,11 @@ export default function SignUp() {
             <Box mt={5}>
                 <Copyright />
             </Box>
+            <Snackbar open={errorOpen} autoHideDuration={6000}>
+                <Alert severity="warning">
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
         </Container>
     );
 }

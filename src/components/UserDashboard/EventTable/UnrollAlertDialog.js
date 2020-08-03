@@ -32,7 +32,7 @@ export default function UnrollAlertDialog(props) {
     return (
         <div>
             <Button variant="outlined" color="secondary" onClick={handleClickOpen}>
-                Unroll
+                Kaydı Sil
             </Button>
             <Dialog
                 open={open}
@@ -50,7 +50,7 @@ export default function UnrollAlertDialog(props) {
                     <Button onClick={handleClose} color="primary">
                         Hayır
                     </Button>
-                    <Button onClick={handleUnroll} color="primary" autoFocus>
+                    <Button onClick={handleUnroll} color="secondary" autoFocus>
                         Evet
                     </Button>
                 </DialogActions>

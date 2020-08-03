@@ -4,17 +4,14 @@ import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
+import TableContainer from '@material-ui/core/TableContainer';
 import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
 import axios from "axios"
 import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
-import EnrollDialog from "./EnrollDialog";
-import UnrollAlertDialog from "./UnrollAlertDialog";
-
-function preventDefault(event) {
-    event.preventDefault();
-}
+import UnrollAlertDialog from "./EventTable/UnrollAlertDialog";
+import QRCodeGenerator from "./EventTable/QRCodeGenerator";
 
 const useStyles = makeStyles((theme) => ({
     seeMore: {
@@ -45,41 +42,55 @@ export default function EnrolledEvents(props) {
 
     return (
         <React.Fragment>
-            <Title>Enrolled Events</Title>
-            <Table className={classes.table} aria-label="simple table" size="small">
-                <TableHead>
-                    <TableRow>
-                        <TableCell>Event Title</TableCell>
-                        <TableCell align="right">Beginning Time</TableCell>
-                        <TableCell align="right">Ending Time</TableCell>
-                        <TableCell align="right">Actions</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {events.map((event) => (
-                        <TableRow key={event.name}>
-                            <TableCell component="th" scope="row">
-                                {event.title}
-                            </TableCell>
-                            <TableCell align="right">{new Date(Date.parse(event.beginningTime)).toLocaleString()}</TableCell>
-                            <TableCell align="right">{new Date(Date.parse(event.endingTime)).toLocaleString()}</TableCell>
-                            <TableCell align="right">
-                                <ButtonGroup color="secondary" aria-label="contained primary button group">
-                                    <Button
-                                        component={() => <UnrollAlertDialog
-                                            update={props.count}
-                                            setUpdate={props.setCount}
-                                            user={props.user}
-                                            eventKey={event.eventKey}
-                                            event={event}/>}>
-                                        Unroll
-                                    </Button>
-                                </ButtonGroup>
-                            </TableCell>
+            <Title>Kayıt Olunan Etkinlikler</Title>
+            <TableContainer>
+                <Table className={classes.table} aria-label="simple table" size="small">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Etkinlik İsmi</TableCell>
+                            <TableCell align="center">Başlangıç Zamanı</TableCell>
+                            <TableCell align="center">Bitiş Zamanı</TableCell>
+                            <TableCell align="center">Düzenle</TableCell>
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+                    </TableHead>
+                    <TableBody>
+                        {events.map((event) =>  {
+                            if (Date.now() < Date.parse(event.beginningTime)) {return(
+                                <TableRow key={event.title}>
+                                    <TableCell component="th" scope="row">
+                                        {event.title}
+                                    </TableCell>
+                                    <TableCell align="right">{new Date(Date.parse(event.beginningTime)).toLocaleString()}</TableCell>
+                                    <TableCell align="right">{new Date(Date.parse(event.endingTime)).toLocaleString()}</TableCell>
+                                    <TableCell align="right">
+                                        <ButtonGroup color="secondary" aria-label="contained primary button group">
+                                            <Button
+                                                component={() => <UnrollAlertDialog
+                                                    update={props.count}
+                                                    setUpdate={props.setCount}
+                                                    user={props.user}
+                                                    eventKey={event.eventKey}
+                                                    event={event}/>}>
+                                                Kaydı Sil
+                                            </Button>
+                                            <Button
+                                                component={() => <QRCodeGenerator
+                                                    update={props.count}
+                                                    setUpdate={props.setCount}
+                                                    user={props.user}
+                                                    eventKey={event.eventKey}
+                                                    event={event}/>
+                                                }>
+                                                QR Kod
+                                            </Button>
+                                        </ButtonGroup>
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                            })}
+                    </TableBody>
+                </Table>
+            </TableContainer>
 
         </React.Fragment>
     );
