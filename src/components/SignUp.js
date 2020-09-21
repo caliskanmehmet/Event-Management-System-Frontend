@@ -14,7 +14,7 @@ import Container from '@material-ui/core/Container';
 import AuthService from "../services/AuthService";
 import Redirect from "react-router-dom/Redirect";
 import SuccessMessage from "./SuccessMessage";
-import Alert from "@material-ui/lab/Alert";
+import MuiAlert from "@material-ui/lab/Alert";
 import Snackbar from "@material-ui/core/Snackbar";
 
 function Copyright() {
@@ -25,6 +25,10 @@ function Copyright() {
             {'.'}
         </Typography>
     );
+}
+
+function Alert(props) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
 const useStyles = makeStyles((theme) => ({

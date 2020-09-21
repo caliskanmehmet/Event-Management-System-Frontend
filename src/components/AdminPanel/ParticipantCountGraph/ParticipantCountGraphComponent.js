@@ -28,7 +28,7 @@ export default function ParticipantCountGraphComponent(props) {
             <XAxis dataKey="title">
                 {/*<Label value="Pages of my website" offset={0} position="insideBottom" />*/}
             </XAxis>
-            <YAxis label={{ value: 'Participant Count', angle: -90, position: 'insideLeft' }} />
+            <YAxis label={{ value: 'Katılımcı Sayısı', angle: -90, position: 'insideLeft' }} />
             <Tooltip/>
             <Bar dataKey="participantCount" fill="#82ca9d">
                 <LabelList dataKey="title" position="top" />

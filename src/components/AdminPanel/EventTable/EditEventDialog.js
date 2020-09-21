@@ -15,8 +15,12 @@ import {
 import 'date-fns';
 import Grid from '@material-ui/core/Grid';
 import DateFnsUtils from '@date-io/date-fns';
-import Alert from "@material-ui/lab/Alert";
+import MuiAlert from "@material-ui/lab/Alert";
 import Snackbar from "@material-ui/core/Snackbar";
+
+function Alert(props) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 export default function EditEventDialog(props) {
     const [open, setOpen] = React.useState(false);
@@ -81,8 +85,14 @@ export default function EditEventDialog(props) {
             props.setUpdate(props.update + 1) // trigger a render
         })
             .catch(err => {
-                setErrorMessage(err.response.data.errors[0].defaultMessage)
-                setErrorOpen(true)
+                if ( err.response.data.errors ) {
+                    setErrorMessage(err.response.data.errors[0].defaultMessage)
+                    setErrorOpen(true)
+                }
+                else if (err.response.data.message) {
+                    setErrorMessage(err.response.data.message)
+                    setErrorOpen(true)
+                }
                 console.log(err.response)
             })
     };
@@ -203,7 +213,7 @@ export default function EditEventDialog(props) {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <Snackbar open={errorOpen} autoHideDuration={6000}>
+            <Snackbar open={errorOpen} autoHideDuration={6000} onClose={() => setErrorOpen(false)}>
                 <Alert severity="warning">
                     {errorMessage}
                 </Alert>
