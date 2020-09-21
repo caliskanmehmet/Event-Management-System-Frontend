@@ -29,7 +29,7 @@ export default function EnrollmentDateGraphComponent(props) {
             <XAxis dataKey="localDate">
                 {/*<Label value="Pages of my website" offset={0} position="insideBottom" />*/}
             </XAxis>
-            <YAxis label={{ value: 'Participant Enrollment Count per Date', angle: -90, position: 'insideLeft' }} />
+            <YAxis label={{ value: 'Başvuru gününe göre katılımcı sayısı', angle: -90, position: 'insideLeft' }} />
             <Tooltip/>
             <Bar dataKey="participantCount" fill="#82ca9d">
                 <LabelList dataKey="title" position="top" />
