@@ -40,7 +40,7 @@ export default function EnrolledClients(props) {
                 onClose={handleClose}
                 aria-labelledby="max-width-dialog-title"
             >
-                <DialogTitle id="max-width-dialog-title">Katılımcılar</DialogTitle>
+                <DialogTitle id="max-width-dialog-title">{`Katılımcılar - ${props.event.title}`}</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         Burada etkinliğe katılan katılımcıların bilgilerini görebilirsiniz.
